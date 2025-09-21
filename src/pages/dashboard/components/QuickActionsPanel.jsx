@@ -1,10 +1,29 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 
 const QuickActionsPanel = () => {
   const [calculatorAmount, setCalculatorAmount] = useState("");
   const [calculatorResult, setCalculatorResult] = useState(null);
+
+  const navigate = useNavigate();
+
+  const handleBuyTokens = () => {
+    navigate("/asset-browser");
+  };
+
+  const handleSellTokens = () => {
+    navigate("/portfolio-management"); // Or a sell modal/route if you have one
+  };
+
+  const handleViewPortfolio = () => {
+    navigate("/portfolio-management");
+  };
+
+  const handleBrowseAssets = () => {
+    navigate("/asset-browser");
+  };
 
   const trendingAssets = [
     {
@@ -60,6 +79,11 @@ const QuickActionsPanel = () => {
     return type === "positive" ? "text-success" : "text-error";
   };
 
+  const handleTrendingAssetClick = (asset) => {
+    // Navigate to asset details page, passing asset id as query param
+    navigate(`/asset-details?id=${asset.id}`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Quick Actions */}
@@ -74,6 +98,7 @@ const QuickActionsPanel = () => {
             iconName="Plus"
             iconPosition="left"
             fullWidth
+            onClick={handleBuyTokens}
           >
             Buy Tokens
           </Button>
@@ -83,6 +108,7 @@ const QuickActionsPanel = () => {
             iconName="Minus"
             iconPosition="left"
             fullWidth
+            onClick={handleSellTokens}
           >
             Sell Tokens
           </Button>
@@ -96,6 +122,7 @@ const QuickActionsPanel = () => {
               iconName="PieChart"
               iconPosition="left"
               fullWidth
+              onClick={handleViewPortfolio}
             >
               View Portfolio
             </Button>
@@ -105,6 +132,7 @@ const QuickActionsPanel = () => {
               iconName="Search"
               iconPosition="left"
               fullWidth
+              onClick={handleBrowseAssets}
             >
               Browse Assets
             </Button>
@@ -172,7 +200,12 @@ const QuickActionsPanel = () => {
           <h3 className="text-lg font-semibold text-foreground">
             Trending Assets
           </h3>
-          <Button variant="ghost" size="sm" iconName="ArrowRight">
+          <Button
+            variant="ghost"
+            size="sm"
+            iconName="ArrowRight"
+            onClick={() => navigate("/asset-browser")}
+          >
             View All
           </Button>
         </div>
@@ -182,6 +215,7 @@ const QuickActionsPanel = () => {
             <div
               key={asset?.id}
               className="flex items-center space-x-3 p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-smooth duration-150 cursor-pointer"
+              onClick={() => handleTrendingAssetClick(asset)}
             >
               <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted">
                 <img
