@@ -1,4 +1,5 @@
-**Fractional Asset** is a revolutionary web application that democratizes real estate investment in India by enabling fractional ownership of properties through asset tokenization technology. Inspired by **NPCI's asset tokenization initiatives**, this platform allows users to buy as little as **1% of a property**, making premium real estate accessible to everyone.
+# Fractional Asset 
+Is a revolutionary web application that democratizes real estate investment in India by enabling fractional ownership of properties through asset tokenization technology. Inspired by **NPCI's asset tokenization initiatives**, this platform allows users to buy as little as **1% of a property**, making premium real estate accessible to everyone.
 
 Just like owning shares in a company, users can own **digital tokens representing fractions of real estate assets**, with ownership cryptographically secured on a decentralized network. The platform transforms traditionally illiquid assets into **liquid, tradeable tokens** that can be transferred instantly – similar to sending money via UPI.
 
