@@ -1,11 +1,6 @@
-# Fractional Asset 
-Is a revolutionary web application that democratizes real estate investment in India by enabling fractional ownership of properties through asset tokenization technology. Inspired by **NPCI's asset tokenization initiatives**, this platform allows users to buy as little as **1% of a property**, making premium real estate accessible to everyone.
+# 🏡 Fractional Asset
 
-Just like owning shares in a company, users can own **digital tokens representing fractions of real estate assets**, with ownership cryptographically secured on a decentralized network. The platform transforms traditionally illiquid assets into **liquid, tradeable tokens** that can be transferred instantly – similar to sending money via UPI.
-
----
-
-**Fractional Asset** is a revolutionary web application that democratizes real estate investment in India by enabling fractional ownership of properties through asset tokenization technology. Inspired by **NPCI's asset tokenization initiatives**, this platform allows users to buy as little as **1% of a property**, making premium real estate accessible to everyone.
+**Fractional Asset** is a revolutionary web application that democratizes real estate investment in India by enabling fractional ownership of properties through **asset tokenization technology**. Inspired by **NPCI's asset tokenization initiatives**, this platform allows users to buy as little as **1% of a property**, making premium real estate accessible to everyone.
 
 Just like owning shares in a company, users can own **digital tokens representing fractions of real estate assets**, with ownership cryptographically secured on a decentralized network. The platform transforms traditionally illiquid assets into **liquid, tradeable tokens** that can be transferred instantly – similar to sending money via UPI.
 
@@ -34,6 +29,16 @@ Just like owning shares in a company, users can own **digital tokens representin
 - **Geographic Independence**: Invest in properties across India from anywhere
 - **Professional Management**: Properties managed by certified professionals
 
+### 🆕 List Property (New Feature)
+
+Empowering property owners to tokenize and share their assets with investors.
+
+- **Property Listing Portal**: Upload property details, documents, and images
+- **Fractional Token Creation**: Define how much of the property to tokenize (e.g., 10%, 25%, or more)
+- **Customizable Offers**: Decide minimum investment share (e.g., 1%)
+- **Seamless Token Distribution**: Automatically generate and allocate tokens to buyers
+- **Owner Dashboard**: Track shared ownership, transactions, and earnings
+
 ---
 
 ## 🎯 Problem Statement
@@ -55,6 +60,7 @@ Following NPCI's asset tokenization framework, our platform addresses these chal
 - **Enhanced Asset Liquidity**: Assets that traditionally take months to sell can be moved within seconds
 - **Unified Asset Management**: Single wallet to manage and transact on all tokenized assets
 - **Financial Inclusion**: More Indians get access to wealth-building opportunities than ever before
+- **Owner Monetization (New)**: Property owners can unlock liquidity by selling fractional tokens without losing complete ownership
 
 ---
 
@@ -66,8 +72,6 @@ Following NPCI's asset tokenization framework, our platform addresses these chal
 - **Routing**: React Router (client-side routing)
 - **UI Components**: Custom component library with reusable elements
 - **Development**: Modern ES6+ with hot module replacement
-
----
 
 ---
 
@@ -117,6 +121,13 @@ Following NPCI's asset tokenization framework, our platform addresses these chal
 - Transaction details and status tracking
 - Export functionality for record keeping
 
+### 🆕 List Property
+
+- Property owners can upload and tokenize their assets
+- Define fractional ownership and distribute tokens
+- Owner dashboard for tracking revenue and co-ownership
+- Built-in compliance checks and document verification
+
 ---
 
 ## 🔒 Security & Trust
@@ -128,24 +139,20 @@ Following NPCI's asset tokenization framework, our platform addresses these chal
 
 ---
 
-## 🌟 Benefits for Investors
+## 🌟 Benefits for Investors & Owners
 
-### Accessibility
+### For Investors
 
-- Lower Investment Threshold: Start with minimal capital investment
+- Lower Investment Threshold: Start with minimal capital
 - Geographic Freedom: Invest in premium properties across India
-- 24/7 Availability: Trade and manage assets anytime, anywhere
+- 24/7 Availability: Trade and manage assets anytime
+- Instant Transfers: Buy/sell fractional tokens seamlessly
 
-### Liquidity Enhancement
+### For Property Owners (New)
 
-- Instant Transfers: Move ownership within seconds
-- Market Access: Trade on secondary markets
-- Fractional Trading: Buy and sell partial ownership stakes
-
-### Transparency & Trust
-
-- Blockchain Verification: Immutable ownership records
-- Real-time Updates: Live portfolio and performance tracking
-- Professional Management: Expert property management and maintenance
+- Unlock Liquidity: Monetize property without full sale
+- Flexible Control: Choose how much of your property to fractionalize
+- Wider Reach: Access a pool of small and large investors
+- Transparent Management: Track investors, ownership, and revenue in real time
 
 ---
