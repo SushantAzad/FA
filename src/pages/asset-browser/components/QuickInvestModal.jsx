@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
-import Input from '../../../components/ui/Input';
-import Image from '../../../components/AppImage';
+import React, { useState } from "react";
+import Icon from "../../../components/AppIcon";
+import Button from "../../../components/ui/Button";
+import Input from "../../../components/ui/Input";
+import Image from "../../../components/AppImage";
 
 const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
-  const [investmentAmount, setInvestmentAmount] = useState(property?.minInvestment || 1000);
+  const [investmentAmount, setInvestmentAmount] = useState(
+    property?.minInvestment || 1000
+  );
   const [tokenQuantity, setTokenQuantity] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
 
@@ -15,7 +17,7 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
     const amount = parseInt(value) || 0;
     setInvestmentAmount(amount);
     setIsCalculating(true);
-    
+
     // Simulate calculation delay
     setTimeout(() => {
       const tokens = Math.floor(amount / property?.tokenPrice);
@@ -35,20 +37,22 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
       propertyId: property?.id,
       amount: investmentAmount,
       tokens: tokenQuantity,
-      property
+      property,
     });
   };
 
   const estimatedReturns = {
     monthly: (investmentAmount * (property?.expectedReturn / 100)) / 12,
     yearly: investmentAmount * (property?.expectedReturn / 100),
-    total: investmentAmount + (investmentAmount * (property?.expectedReturn / 100) * 5)
+    total:
+      investmentAmount +
+      investmentAmount * (property?.expectedReturn / 100) * 5,
   };
 
   return (
     <div className="fixed inset-0 z-500 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
@@ -108,17 +112,18 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
           <h4 className="font-semibold text-card-foreground mb-4">
             Investment Calculator
           </h4>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <Input
-              label="Investment Amount ($)"
+              label="Investment Amount (₹
+              )"
               type="number"
               value={investmentAmount}
               onChange={(e) => handleAmountChange(e?.target?.value)}
               min={property?.minInvestment}
               placeholder="Enter amount"
             />
-            
+
             <Input
               label="Token Quantity"
               type="number"
@@ -132,7 +137,9 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
           {isCalculating && (
             <div className="flex items-center justify-center py-4">
               <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin mr-2" />
-              <span className="text-sm text-muted-foreground">Calculating...</span>
+              <span className="text-sm text-muted-foreground">
+                Calculating...
+              </span>
             </div>
           )}
 
@@ -172,33 +179,48 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
           <h4 className="font-semibold text-card-foreground mb-4">
             Estimated Returns
           </h4>
-          
+
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Monthly Return</span>
               <span className="font-semibold text-success">
-                ${estimatedReturns?.monthly?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                $
+                {estimatedReturns?.monthly?.toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Annual Return</span>
               <span className="font-semibold text-success">
-                ${estimatedReturns?.yearly?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                $
+                {estimatedReturns?.yearly?.toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">5-Year Projection</span>
               <span className="font-semibold text-success">
-                ${estimatedReturns?.total?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                $
+                {estimatedReturns?.total?.toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })}
               </span>
             </div>
           </div>
 
           <div className="mt-4 p-3 bg-warning/10 border border-warning/20 rounded-lg">
             <div className="flex items-start space-x-2">
-              <Icon name="AlertTriangle" size={16} className="text-warning mt-0.5" />
+              <Icon
+                name="AlertTriangle"
+                size={16}
+                className="text-warning mt-0.5"
+              />
               <div className="text-xs text-warning-foreground">
-                <strong>Disclaimer:</strong> Returns are estimates based on historical data and market projections. Actual returns may vary and are not guaranteed.
+                <strong>Disclaimer:</strong> Returns are estimates based on
+                historical data and market projections. Actual returns may vary
+                and are not guaranteed.
               </div>
             </div>
           </div>
@@ -207,11 +229,7 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
         {/* Actions */}
         <div className="p-6">
           <div className="flex space-x-3">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={onClose}
-            >
+            <Button variant="outline" className="flex-1" onClick={onClose}>
               Cancel
             </Button>
             <Button
@@ -225,9 +243,10 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
               Proceed to Payment
             </Button>
           </div>
-          
+
           <div className="mt-3 text-xs text-muted-foreground text-center">
-            By proceeding, you agree to our Terms of Service and Investment Agreement
+            By proceeding, you agree to our Terms of Service and Investment
+            Agreement
           </div>
         </div>
       </div>
