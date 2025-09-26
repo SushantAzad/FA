@@ -5,8 +5,9 @@ import Input from "../../../components/ui/Input";
 import Image from "../../../components/AppImage";
 
 const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
+  // Store investment in INR, convert from USD if needed
   const [investmentAmount, setInvestmentAmount] = useState(
-    property?.minInvestment || 1000
+    property?.minInvestment ? property.minInvestment * 83 : 1000 * 83
   );
   const [tokenQuantity, setTokenQuantity] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -20,7 +21,8 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
 
     // Simulate calculation delay
     setTimeout(() => {
-      const tokens = Math.floor(amount / property?.tokenPrice);
+      // Convert token price to INR for calculation
+      const tokens = Math.floor(amount / (property?.tokenPrice * 83));
       setTokenQuantity(tokens);
       setIsCalculating(false);
     }, 300);
@@ -29,7 +31,7 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
   const handleTokenChange = (value) => {
     const tokens = parseInt(value) || 0;
     setTokenQuantity(tokens);
-    setInvestmentAmount(tokens * property?.tokenPrice);
+    setInvestmentAmount(tokens * (property?.tokenPrice * 83));
   };
 
   const handleConfirm = () => {
@@ -93,7 +95,7 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
                 <div>
                   <span className="text-muted-foreground">Token Price: </span>
                   <span className="font-medium text-card-foreground">
-                    ${property?.tokenPrice?.toLocaleString()}
+                    ₹{(property?.tokenPrice * 83)?.toLocaleString("en-IN")}
                   </span>
                 </div>
                 <div>
@@ -115,12 +117,11 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <Input
-              label="Investment Amount (₹
-              )"
+              label="Investment Amount (₹)"
               type="number"
               value={investmentAmount}
               onChange={(e) => handleAmountChange(e?.target?.value)}
-              min={property?.minInvestment}
+              min={property?.minInvestment ? property.minInvestment * 83 : 0}
               placeholder="Enter amount"
             />
 
@@ -149,7 +150,7 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
               <div>
                 <div className="text-muted-foreground">Total Investment</div>
                 <div className="font-semibold text-card-foreground">
-                  ${investmentAmount?.toLocaleString()}
+                  ₹{investmentAmount?.toLocaleString("en-IN")}
                 </div>
               </div>
               <div>
@@ -167,7 +168,7 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
               <div>
                 <div className="text-muted-foreground">Min. Investment</div>
                 <div className="font-semibold text-card-foreground">
-                  ${property?.minInvestment?.toLocaleString()}
+                  ₹{(property?.minInvestment * 83)?.toLocaleString("en-IN")}
                 </div>
               </div>
             </div>
@@ -184,8 +185,8 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Monthly Return</span>
               <span className="font-semibold text-success">
-                $
-                {estimatedReturns?.monthly?.toLocaleString(undefined, {
+                ₹
+                {estimatedReturns?.monthly?.toLocaleString("en-IN", {
                   maximumFractionDigits: 2,
                 })}
               </span>
@@ -193,8 +194,8 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Annual Return</span>
               <span className="font-semibold text-success">
-                $
-                {estimatedReturns?.yearly?.toLocaleString(undefined, {
+                ₹
+                {estimatedReturns?.yearly?.toLocaleString("en-IN", {
                   maximumFractionDigits: 2,
                 })}
               </span>
@@ -202,8 +203,8 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">5-Year Projection</span>
               <span className="font-semibold text-success">
-                $
-                {estimatedReturns?.total?.toLocaleString(undefined, {
+                ₹
+                {estimatedReturns?.total?.toLocaleString("en-IN", {
                   maximumFractionDigits: 2,
                 })}
               </span>
