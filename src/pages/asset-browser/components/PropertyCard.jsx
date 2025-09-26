@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
-import Button from '../../../components/ui/Button';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Icon from "../../../components/AppIcon";
+import Image from "../../../components/AppImage";
+import Button from "../../../components/ui/Button";
 
 const PropertyCard = ({ property, onFavorite, onQuickInvest }) => {
   const navigate = useNavigate();
-  const [isFavorited, setIsFavorited] = useState(property?.isFavorited || false);
+  const [isFavorited, setIsFavorited] = useState(
+    property?.isFavorited || false
+  );
   const [isImageLoading, setIsImageLoading] = useState(true);
 
   const handleFavoriteClick = (e) => {
@@ -21,37 +23,37 @@ const PropertyCard = ({ property, onFavorite, onQuickInvest }) => {
   };
 
   const handleCardClick = () => {
-    navigate('/asset-details', { state: { propertyId: property?.id } });
+    navigate("/asset-details", { state: { propertyId: property?.id } });
   };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case 'available':
-        return 'bg-success/10 text-success border-success/20';
-      case 'limited':
-        return 'bg-warning/10 text-warning border-warning/20';
-      case 'sold out':
-        return 'bg-error/10 text-error border-error/20';
+      case "available":
+        return "bg-success/10 text-success border-success/20";
+      case "limited":
+        return "bg-warning/10 text-warning border-warning/20";
+      case "sold out":
+        return "bg-error/10 text-error border-error/20";
       default:
-        return 'bg-muted text-muted-foreground border-border';
+        return "bg-muted text-muted-foreground border-border";
     }
   };
 
   const getRiskColor = (risk) => {
     switch (risk?.toLowerCase()) {
-      case 'low':
-        return 'text-success';
-      case 'medium':
-        return 'text-warning';
-      case 'high':
-        return 'text-error';
+      case "low":
+        return "text-success";
+      case "medium":
+        return "text-warning";
+      case "high":
+        return "text-error";
       default:
-        return 'text-muted-foreground';
+        return "text-muted-foreground";
     }
   };
 
   return (
-    <div 
+    <div
       className="group bg-card border border-border rounded-lg overflow-hidden hover:shadow-elevation-2 transition-all duration-300 cursor-pointer"
       onClick={handleCardClick}
     >
@@ -61,11 +63,11 @@ const PropertyCard = ({ property, onFavorite, onQuickInvest }) => {
           src={property?.image}
           alt={property?.title}
           className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
-            isImageLoading ? 'opacity-0' : 'opacity-100'
+            isImageLoading ? "opacity-0" : "opacity-100"
           }`}
           onLoad={() => setIsImageLoading(false)}
         />
-        
+
         {/* Loading skeleton */}
         {isImageLoading && (
           <div className="absolute inset-0 bg-muted animate-pulse" />
@@ -76,15 +78,21 @@ const PropertyCard = ({ property, onFavorite, onQuickInvest }) => {
           onClick={handleFavoriteClick}
           className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors duration-200"
         >
-          <Icon 
-            name={isFavorited ? 'Heart' : 'Heart'} 
-            size={16} 
-            className={isFavorited ? 'text-error fill-current' : 'text-muted-foreground'} 
+          <Icon
+            name={isFavorited ? "Heart" : "Heart"}
+            size={16}
+            className={
+              isFavorited ? "text-error fill-current" : "text-muted-foreground"
+            }
           />
         </button>
 
         {/* Status Badge */}
-        <div className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(property?.status)}`}>
+        <div
+          className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(
+            property?.status
+          )}`}
+        >
           {property?.status}
         </div>
 
@@ -109,9 +117,11 @@ const PropertyCard = ({ property, onFavorite, onQuickInvest }) => {
         {/* Key Metrics */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div>
-            <div className="text-xs text-muted-foreground">Token Price</div>
+            <div className="text-xs text-muted-foreground">
+              Token Price (INR)
+            </div>
             <div className="text-sm font-semibold text-card-foreground">
-              ${property?.tokenPrice?.toLocaleString()}
+              ₹{(property?.tokenPrice * 83)?.toLocaleString()}
             </div>
           </div>
           <div>
@@ -121,14 +131,20 @@ const PropertyCard = ({ property, onFavorite, onQuickInvest }) => {
             </div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground">Min Investment</div>
+            <div className="text-xs text-muted-foreground">
+              Min Investment (INR)
+            </div>
             <div className="text-sm font-semibold text-card-foreground">
-              ${property?.minInvestment?.toLocaleString()}
+              ₹{(property?.minInvestment * 83)?.toLocaleString()}
             </div>
           </div>
           <div>
             <div className="text-xs text-muted-foreground">Risk Level</div>
-            <div className={`text-sm font-semibold ${getRiskColor(property?.riskLevel)}`}>
+            <div
+              className={`text-sm font-semibold ${getRiskColor(
+                property?.riskLevel
+              )}`}
+            >
               {property?.riskLevel}
             </div>
           </div>
@@ -141,13 +157,14 @@ const PropertyCard = ({ property, onFavorite, onQuickInvest }) => {
             <span>{property?.fundedPercentage}%</span>
           </div>
           <div className="w-full bg-muted rounded-full h-2">
-            <div 
+            <div
               className="bg-primary h-2 rounded-full transition-all duration-300"
               style={{ width: `${property?.fundedPercentage}%` }}
             />
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            ${property?.raisedAmount?.toLocaleString()} of ${property?.targetAmount?.toLocaleString()}
+            ₹{(property?.raisedAmount * 83)?.toLocaleString()} of ₹
+            {(property?.targetAmount * 83)?.toLocaleString()}
           </div>
         </div>
 
@@ -170,7 +187,7 @@ const PropertyCard = ({ property, onFavorite, onQuickInvest }) => {
             iconName="Plus"
             iconPosition="left"
             onClick={handleQuickInvest}
-            disabled={property?.status?.toLowerCase() === 'sold out'}
+            disabled={property?.status?.toLowerCase() === "sold out"}
           >
             Invest
           </Button>

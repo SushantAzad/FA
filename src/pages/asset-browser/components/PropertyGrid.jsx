@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import PropertyCard from './PropertyCard';
-import PropertySkeleton from './PropertySkeleton';
-import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
+import React, { useState, useEffect } from "react";
+import PropertyCard from "./PropertyCard";
+import PropertySkeleton from "./PropertySkeleton";
+import Icon from "../../../components/AppIcon";
+import Button from "../../../components/ui/Button";
 
-const PropertyGrid = ({ 
-  properties, 
-  loading, 
-  hasMore, 
-  onLoadMore, 
-  onFavorite, 
+const PropertyGrid = ({
+  properties,
+  loading,
+  hasMore,
+  onLoadMore,
+  onFavorite,
   onQuickInvest,
-  totalResults 
+  totalResults,
 }) => {
   const [loadingMore, setLoadingMore] = useState(false);
 
@@ -32,7 +32,7 @@ const PropertyGrid = ({
       { threshold: 0.1 }
     );
 
-    const sentinel = document.getElementById('scroll-sentinel');
+    const sentinel = document.getElementById("scroll-sentinel");
     if (sentinel) {
       observer?.observe(sentinel);
     }
@@ -64,7 +64,8 @@ const PropertyGrid = ({
           No Properties Found
         </h3>
         <p className="text-muted-foreground mb-6 max-w-md">
-          We couldn't find any properties matching your current filters. Try adjusting your search criteria or clearing some filters.
+          We couldn't find any properties matching your current filters. Try
+          adjusting your search criteria or clearing some filters.
         </p>
         <Button variant="outline" iconName="RotateCcw" iconPosition="left">
           Reset Filters
@@ -78,7 +79,8 @@ const PropertyGrid = ({
       {/* Results Summary */}
       <div className="flex items-center justify-between mb-6">
         <div className="text-sm text-muted-foreground">
-          Showing {properties?.length} of {totalResults?.toLocaleString()} properties
+          Showing {properties?.length} of {totalResults?.toLocaleString()}{" "}
+          properties
         </div>
         <div className="flex items-center space-x-2 text-sm text-muted-foreground">
           <Icon name="Filter" size={16} />
@@ -95,13 +97,12 @@ const PropertyGrid = ({
             onQuickInvest={onQuickInvest}
           />
         ))}
-        
+
         {/* Loading more skeletons */}
-        {loadingMore && 
+        {loadingMore &&
           Array.from({ length: 4 })?.map((_, index) => (
             <PropertySkeleton key={`loading-${index}`} />
-          ))
-        }
+          ))}
       </div>
       {/* Load More / Infinite Scroll Sentinel */}
       {hasMore && (

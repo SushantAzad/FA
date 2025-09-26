@@ -127,7 +127,9 @@ const PropertyUpload = () => {
                 <span className="text-sm text-muted-foreground">Listed</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-2xl font-bold text-green-600">$1.2M</span>
+                <span className="text-2xl font-bold text-green-600">
+                  ₹{(1.2 * 1000000 * 83).toLocaleString()}
+                </span>
                 <span className="text-sm text-muted-foreground">
                   Total Value
                 </span>
@@ -193,14 +195,14 @@ const PropertyUpload = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Price (USD)
+                  Price (INR)
                 </label>
                 <Input
                   type="number"
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
-                  placeholder="Enter price"
+                  placeholder="Enter price in INR"
                   required
                 />
               </div>

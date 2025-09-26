@@ -56,12 +56,7 @@ const ComparableProperties = ({ currentProperty }) => {
   ];
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })?.format(amount);
+    return `₹${amount?.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
   };
 
   const getComparisonColor = (
@@ -162,7 +157,10 @@ const ComparableProperties = ({ currentProperty }) => {
                     Token Price
                   </div>
                   <div className="text-lg font-semibold text-foreground">
-                    ${property?.tokenPrice}
+                    ₹
+                    {property?.tokenPrice?.toLocaleString("en-IN", {
+                      maximumFractionDigits: 0,
+                    })}
                   </div>
                   <div
                     className={`flex items-center justify-center space-x-1 text-xs ${getComparisonColor(

@@ -33,18 +33,19 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const USD_TO_INR = 83;
   const portfolioSummaryData = [
     {
       title: "Total Portfolio Value",
-      value: "$13,245.67",
+      value: `₹${(13245.67 * USD_TO_INR).toLocaleString()}`,
       change: "+2.9%",
       changeType: "positive",
-      icon: "DollarSign",
+      icon: "IndianRupee",
       iconColor: "var(--color-success)",
     },
     {
       title: "Total Returns",
-      value: "$1,245.67",
+      value: `₹${(1245.67 * USD_TO_INR).toLocaleString()}`,
       change: "+8.4%",
       changeType: "positive",
       icon: "TrendingUp",
@@ -60,7 +61,7 @@ const Dashboard = () => {
     },
     {
       title: "Monthly Dividends",
-      value: "$342.50",
+      value: `₹${(342.5 * USD_TO_INR).toLocaleString()}`,
       change: "+5.2%",
       changeType: "positive",
       icon: "Coins",
@@ -179,7 +180,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="flex items-center space-x-3 p-3 bg-success/10 rounded-lg">
-                  <Icon name="DollarSign" size={20} className="text-success" />
+                  <Icon name="IndianRupee" size={20} className="text-success" />
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       Dividend Yield

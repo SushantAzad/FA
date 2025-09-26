@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
-import Input from '../../../components/ui/Input';
+import React, { useState } from "react";
+import Icon from "../../../components/AppIcon";
+import Button from "../../../components/ui/Button";
+import Input from "../../../components/ui/Input";
 
 const InvestmentPanel = ({ property, onInvest }) => {
-  const [investmentAmount, setInvestmentAmount] = useState('');
+  const [investmentAmount, setInvestmentAmount] = useState("");
   const [tokenQuantity, setTokenQuantity] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isWatchlisted, setIsWatchlisted] = useState(false);
@@ -12,7 +12,7 @@ const InvestmentPanel = ({ property, onInvest }) => {
   const handleAmountChange = (e) => {
     const amount = e?.target?.value;
     setInvestmentAmount(amount);
-    
+
     if (amount && !isNaN(amount)) {
       const tokens = Math.floor(parseFloat(amount) / property?.tokenPrice);
       setTokenQuantity(tokens);
@@ -24,12 +24,12 @@ const InvestmentPanel = ({ property, onInvest }) => {
   const handleTokenChange = (e) => {
     const tokens = e?.target?.value;
     setTokenQuantity(tokens);
-    
+
     if (tokens && !isNaN(tokens)) {
       const amount = parseFloat(tokens) * property?.tokenPrice;
       setInvestmentAmount(amount?.toString());
     } else {
-      setInvestmentAmount('');
+      setInvestmentAmount("");
     }
   };
 
@@ -43,10 +43,10 @@ const InvestmentPanel = ({ property, onInvest }) => {
     onInvest({
       amount: parseFloat(investmentAmount),
       tokens: tokenQuantity,
-      property: property
+      property: property,
     });
     setShowConfirmation(false);
-    setInvestmentAmount('');
+    setInvestmentAmount("");
     setTokenQuantity(0);
   };
 
@@ -55,17 +55,27 @@ const InvestmentPanel = ({ property, onInvest }) => {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     })?.format(amount);
   };
 
+  // Convert all USD values to INR using fixed rate
+  const USD_TO_INR = 83;
   const estimatedReturns = {
-    monthly: tokenQuantity * property?.tokenPrice * (property?.dividendYield / 100 / 12),
-    annual: tokenQuantity * property?.tokenPrice * (property?.expectedReturn / 100)
+    monthly:
+      tokenQuantity *
+      property?.tokenPrice *
+      USD_TO_INR *
+      (property?.dividendYield / 100 / 12),
+    annual:
+      tokenQuantity *
+      property?.tokenPrice *
+      USD_TO_INR *
+      (property?.expectedReturn / 100),
   };
 
   return (
@@ -73,39 +83,54 @@ const InvestmentPanel = ({ property, onInvest }) => {
       <div className="bg-card rounded-lg p-6 shadow-elevation-2 sticky top-6">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground">Token Price</span>
-            <span className="text-lg font-bold text-foreground">${property?.tokenPrice}</span>
+            <span className="text-sm text-muted-foreground">
+              Token Price (INR)
+            </span>
+            <span className="text-lg font-bold text-foreground">
+              ₹{(property?.tokenPrice * USD_TO_INR)?.toLocaleString()}
+            </span>
           </div>
-          
+
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm text-muted-foreground">Available Tokens</span>
+            <span className="text-sm text-muted-foreground">
+              Available Tokens
+            </span>
             <span className="text-sm font-medium text-foreground">
               {property?.availableTokens?.toLocaleString()}
             </span>
           </div>
 
           <div className="w-full bg-muted rounded-full h-2 mb-2">
-            <div 
+            <div
               className="bg-primary h-2 rounded-full"
-              style={{ 
-                width: `${((property?.totalTokens - property?.availableTokens) / property?.totalTokens) * 100}%` 
+              style={{
+                width: `${
+                  ((property?.totalTokens - property?.availableTokens) /
+                    property?.totalTokens) *
+                  100
+                }%`,
               }}
             />
           </div>
           <div className="text-xs text-muted-foreground text-center">
-            {(((property?.totalTokens - property?.availableTokens) / property?.totalTokens) * 100)?.toFixed(1)}% funded
+            {(
+              ((property?.totalTokens - property?.availableTokens) /
+                property?.totalTokens) *
+              100
+            )?.toFixed(1)}
+            % funded
           </div>
         </div>
 
         {/* Investment Calculator */}
         <div className="space-y-4 mb-6">
           <Input
-            label="Investment Amount ($)"
+            label="Investment Amount (INR)"
             type="number"
-            placeholder="Enter amount"
+            placeholder="Enter amount in INR"
             value={investmentAmount}
             onChange={handleAmountChange}
-            min={property?.minimumInvestment}
+            min={property?.minimumInvestment * USD_TO_INR}
           />
 
           <Input
@@ -120,13 +145,17 @@ const InvestmentPanel = ({ property, onInvest }) => {
           {tokenQuantity > 0 && (
             <div className="p-4 bg-muted/50 rounded-lg space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Est. Monthly Dividend</span>
+                <span className="text-muted-foreground">
+                  Est. Monthly Dividend
+                </span>
                 <span className="font-medium text-foreground">
                   {formatCurrency(estimatedReturns?.monthly)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Est. Annual Return</span>
+                <span className="text-muted-foreground">
+                  Est. Annual Return
+                </span>
                 <span className="font-medium text-success">
                   {formatCurrency(estimatedReturns?.annual)}
                 </span>
@@ -144,7 +173,9 @@ const InvestmentPanel = ({ property, onInvest }) => {
             iconName="ShoppingCart"
             iconPosition="left"
             onClick={handleInvest}
-            disabled={tokenQuantity === 0 || tokenQuantity > property?.availableTokens}
+            disabled={
+              tokenQuantity === 0 || tokenQuantity > property?.availableTokens
+            }
           >
             Invest Now
           </Button>
@@ -166,7 +197,7 @@ const InvestmentPanel = ({ property, onInvest }) => {
               size="sm"
               iconName="Share"
               iconPosition="left"
-              onClick={() => console.log('Share property')}
+              onClick={() => console.log("Share property")}
             >
               Share
             </Button>
@@ -177,18 +208,24 @@ const InvestmentPanel = ({ property, onInvest }) => {
         <div className="mt-6 pt-6 border-t border-border">
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Minimum Investment</span>
+              <span className="text-muted-foreground">
+                Minimum Investment (INR)
+              </span>
               <span className="font-medium text-foreground">
-                {formatCurrency(property?.minimumInvestment)}
+                {formatCurrency(property?.minimumInvestment * USD_TO_INR)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Expected Return</span>
-              <span className="font-medium text-success">{property?.expectedReturn}%</span>
+              <span className="font-medium text-success">
+                {property?.expectedReturn}%
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Dividend Yield</span>
-              <span className="font-medium text-foreground">{property?.dividendYield}%</span>
+              <span className="font-medium text-foreground">
+                {property?.dividendYield}%
+              </span>
             </div>
           </div>
         </div>
@@ -216,34 +253,51 @@ const InvestmentPanel = ({ property, onInvest }) => {
                 <Icon name="ShoppingCart" size={24} className="text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-foreground">Confirm Investment</h3>
-                <p className="text-sm text-muted-foreground">Review your investment details</p>
+                <h3 className="text-lg font-semibold text-foreground">
+                  Confirm Investment
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Review your investment details
+                </p>
               </div>
             </div>
 
             <div className="space-y-4 mb-6">
               <div className="p-4 bg-muted/50 rounded-lg">
-                <div className="text-sm font-medium text-foreground mb-2">{property?.name}</div>
+                <div className="text-sm font-medium text-foreground mb-2">
+                  {property?.name}
+                </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Investment Amount</span>
+                    <span className="text-muted-foreground">
+                      Investment Amount (INR)
+                    </span>
                     <span className="font-medium text-foreground">
                       {formatCurrency(parseFloat(investmentAmount))}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Number of Tokens</span>
-                    <span className="font-medium text-foreground">{tokenQuantity}</span>
+                    <span className="text-muted-foreground">
+                      Number of Tokens
+                    </span>
+                    <span className="font-medium text-foreground">
+                      {tokenQuantity}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Token Price</span>
-                    <span className="font-medium text-foreground">${property?.tokenPrice}</span>
+                    <span className="text-muted-foreground">
+                      Token Price (INR)
+                    </span>
+                    <span className="font-medium text-foreground">
+                      ₹{(property?.tokenPrice * USD_TO_INR)?.toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="text-xs text-muted-foreground">
-                By confirming this investment, you agree to the terms and conditions outlined in the investment prospectus.
+                By confirming this investment, you agree to the terms and
+                conditions outlined in the investment prospectus.
               </div>
             </div>
 

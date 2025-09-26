@@ -30,7 +30,7 @@ const QuickActionsPanel = () => {
       id: 1,
       name: "Manhattan Office Tower",
       symbol: "MOT",
-      price: "$25.50",
+      price: 25.5 * 83, // in INR
       change: "+5.2%",
       changeType: "positive",
       image:
@@ -40,7 +40,7 @@ const QuickActionsPanel = () => {
       id: 2,
       name: "Beverly Hills Retail",
       symbol: "BHR",
-      price: "$18.75",
+      price: 18.75 * 83, // in INR
       change: "+3.8%",
       changeType: "positive",
       image:
@@ -50,13 +50,21 @@ const QuickActionsPanel = () => {
       id: 3,
       name: "Austin Tech Campus",
       symbol: "ATC",
-      price: "$32.10",
+      price: 32.1 * 83, // in INR
       change: "-1.2%",
       changeType: "negative",
       image:
         "https://images.pixabay.com/photo/2017/07/09/03/19/home-2486092_1280.jpg?w=400&h=300&fit=crop",
     },
   ];
+
+  const formatINR = (amount) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
   const calculateTokens = () => {
     if (!calculatorAmount || isNaN(calculatorAmount)) {
@@ -146,9 +154,9 @@ const QuickActionsPanel = () => {
         </h3>
         <div className="space-y-4">
           <Input
-            label="Investment Amount (USD)"
+            label="Investment Amount (INR)"
             type="number"
-            placeholder="Enter amount"
+            placeholder="Enter amount in rupees"
             value={calculatorAmount}
             onChange={(e) => {
               setCalculatorAmount(e?.target?.value);
@@ -175,7 +183,7 @@ const QuickActionsPanel = () => {
                   Platform Fee:
                 </span>
                 <span className="text-sm font-medium text-foreground">
-                  ${calculatorResult?.fees}
+                  {formatINR(calculatorResult?.fees)}
                 </span>
               </div>
               <div className="flex justify-between pt-2 border-t border-border">
@@ -183,11 +191,10 @@ const QuickActionsPanel = () => {
                   Total Cost:
                 </span>
                 <span className="text-sm font-semibold text-foreground">
-                  $
-                  {(
+                  {formatINR(
                     parseFloat(calculatorResult?.estimatedValue) +
-                    parseFloat(calculatorResult?.fees)
-                  )?.toFixed(2)}
+                      parseFloat(calculatorResult?.fees)
+                  )}
                 </span>
               </div>
             </div>
@@ -237,7 +244,7 @@ const QuickActionsPanel = () => {
 
               <div className="text-right">
                 <p className="text-sm font-semibold text-foreground">
-                  {asset?.price}
+                  {formatINR(asset?.price)}
                 </p>
                 <p
                   className={`text-xs font-medium ${getChangeColor(
