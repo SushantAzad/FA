@@ -69,12 +69,7 @@ const PerformanceChart = ({ performanceData }) => {
   const formatCurrency = (value) => {
     // Convert USD to INR at fixed rate 1 USD = 83 INR
     const inrValue = value * 83;
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })?.format(inrValue);
+    return `₹${inrValue.toLocaleString("en-IN")}`;
   };
 
   const formatDate = (dateString) => {
@@ -215,7 +210,7 @@ const PerformanceChart = ({ performanceData }) => {
               />
               <YAxis
                 tickFormatter={(value) =>
-                  `₹${((value * 83) / 1000)?.toFixed(0)}K`
+                  `₹${(value * 83).toLocaleString("en-IN")}`
                 }
                 stroke="var(--color-muted-foreground)"
                 fontSize={12}
@@ -251,7 +246,9 @@ const PerformanceChart = ({ performanceData }) => {
                 fontSize={12}
               />
               <YAxis
-                tickFormatter={(value) => `$${(value / 1000)?.toFixed(0)}K`}
+                tickFormatter={(value) =>
+                  `₹${(value * 83).toLocaleString("en-IN")}`
+                }
                 stroke="var(--color-muted-foreground)"
                 fontSize={12}
               />

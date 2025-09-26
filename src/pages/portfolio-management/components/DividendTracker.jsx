@@ -28,12 +28,10 @@ const DividendTracker = ({
   const formatCurrency = (value) => {
     // Convert USD to INR at fixed rate 1 USD = 83 INR
     const inrValue = value * 83;
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
+    return `₹${inrValue.toLocaleString("en-IN", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    })?.format(inrValue);
+    })}`;
   };
 
   const formatDate = (dateString) => {

@@ -18,12 +18,7 @@ const PortfolioOverview = ({
   const formatCurrency = (value) => {
     // Convert USD to INR at fixed rate 1 USD = 83 INR
     const inrValue = value * 83;
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })?.format(inrValue);
+    return `₹${inrValue.toLocaleString("en-IN")}`;
   };
 
   const formatPercentage = (value) => {
