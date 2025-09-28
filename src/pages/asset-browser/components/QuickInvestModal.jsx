@@ -218,7 +218,7 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
                 size={16}
                 className="text-warning mt-0.5"
               />
-              <div className="text-xs text-warning-foreground">
+              <div className="text-xs text-black">
                 <strong>Disclaimer:</strong> Returns are estimates based on
                 historical data and market projections. Actual returns may vary
                 and are not guaranteed.
