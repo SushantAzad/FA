@@ -3,6 +3,95 @@ import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 
 const TransactionSummary = ({ summaryData, onExport }) => {
+  // Helper to generate CSV content
+  const generateCSV = () => {
+    const rows = [
+      ["Metric", "Value"],
+      ["Total Transactions", summaryData?.totalTransactions],
+      ["Total Volume (INR)", summaryData?.totalVolume],
+      ["Total Fees (INR)", summaryData?.totalFees],
+      ["Net Profit/Loss (INR)", summaryData?.netProfitLoss],
+      ["Average Transaction (INR)", summaryData?.averageTransaction],
+      ["Success Rate (%)", summaryData?.successRate?.toFixed(1)],
+      ["Total Properties", summaryData?.totalProperties],
+      ["Active Investments", summaryData?.activeInvestments],
+      ["Purchases", summaryData?.breakdown?.purchases],
+      ["Purchase Amount (INR)", summaryData?.breakdown?.purchaseAmount],
+      ["Sales", summaryData?.breakdown?.sales],
+      ["Sale Amount (INR)", summaryData?.breakdown?.saleAmount],
+      ["Dividends", summaryData?.breakdown?.dividends],
+      ["Dividend Amount (INR)", summaryData?.breakdown?.dividendAmount],
+      ["Fees", summaryData?.breakdown?.fees],
+      ["Fee Amount (INR)", summaryData?.breakdown?.feeAmount],
+    ];
+    return rows.map((r) => r.join(",")).join("\n");
+  };
+
+  // Helper to generate PDF content (simple text)
+  const generatePDFText = () => {
+    return (
+      `Transaction Analysis Report\n\n` +
+      `Total Transactions: ${summaryData?.totalTransactions}\n` +
+      `Total Volume (INR): ₹${summaryData?.totalVolume?.toLocaleString(
+        "en-IN"
+      )}\n` +
+      `Total Fees (INR): ₹${summaryData?.totalFees?.toLocaleString(
+        "en-IN"
+      )}\n` +
+      `Net Profit/Loss (INR): ₹${summaryData?.netProfitLoss?.toLocaleString(
+        "en-IN"
+      )}\n` +
+      `Average Transaction (INR): ₹${summaryData?.averageTransaction?.toLocaleString(
+        "en-IN"
+      )}\n` +
+      `Success Rate: ${summaryData?.successRate?.toFixed(1)}%\n` +
+      `Total Properties: ${summaryData?.totalProperties}\n` +
+      `Active Investments: ${summaryData?.activeInvestments}\n` +
+      `Purchases: ${
+        summaryData?.breakdown?.purchases
+      } (₹${summaryData?.breakdown?.purchaseAmount?.toLocaleString(
+        "en-IN"
+      )})\n` +
+      `Sales: ${
+        summaryData?.breakdown?.sales
+      } (₹${summaryData?.breakdown?.saleAmount?.toLocaleString("en-IN")})\n` +
+      `Dividends: ${
+        summaryData?.breakdown?.dividends
+      } (₹${summaryData?.breakdown?.dividendAmount?.toLocaleString(
+        "en-IN"
+      )})\n` +
+      `Fees: ${
+        summaryData?.breakdown?.fees
+      } (₹${summaryData?.breakdown?.feeAmount?.toLocaleString("en-IN")})\n`
+    );
+  };
+
+  // Export handler
+  const handleExport = async (format) => {
+    if (format === "csv") {
+      const csv = generateCSV();
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "transaction_analysis_report.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else if (format === "pdf") {
+      const text = generatePDFText();
+      const blob = new Blob([text], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "transaction_analysis_report.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
   const summaryCards = [
     {
       title: "Total Transactions",
@@ -105,7 +194,7 @@ const TransactionSummary = ({ summaryData, onExport }) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onExport("pdf")}
+              onClick={() => handleExport("pdf")}
               iconName="FileText"
               iconPosition="left"
             >
@@ -114,7 +203,7 @@ const TransactionSummary = ({ summaryData, onExport }) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onExport("csv")}
+              onClick={() => handleExport("csv")}
               iconName="Download"
               iconPosition="left"
             >
