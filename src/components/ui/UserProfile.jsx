@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import Icon from '../AppIcon';
-
+import React, { useState, useEffect } from "react";
+import Icon from "../AppIcon";
 
 const UserProfile = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [user, setUser] = useState({
-    name: 'Alex Johnson',
-    email: 'alex.johnson@email.com',
+    name: "Alex Johnson",
+    email: "alex.johnson@email.com",
     avatar: null,
-    kycStatus: 'verified',
-    memberSince: '2024'
+    kycStatus: "verified",
+    memberSince: "2024",
   });
 
   const toggleDropdown = () => {
@@ -19,71 +18,76 @@ const UserProfile = () => {
   const handleLogout = () => {
     // Handle logout logic
     setShowDropdown(false);
-    console.log('Logging out...');
+    console.log("Logging out...");
   };
 
   const getKycStatusColor = (status) => {
     switch (status) {
-      case 'verified':
-        return 'text-success';
-      case 'pending':
-        return 'text-warning';
-      case 'rejected':
-        return 'text-error';
+      case "verified":
+        return "text-success";
+      case "pending":
+        return "text-warning";
+      case "rejected":
+        return "text-error";
       default:
-        return 'text-muted-foreground';
+        return "text-muted-foreground";
     }
   };
 
   const getKycStatusIcon = (status) => {
     switch (status) {
-      case 'verified':
-        return 'CheckCircle';
-      case 'pending':
-        return 'Clock';
-      case 'rejected':
-        return 'XCircle';
+      case "verified":
+        return "CheckCircle";
+      case "pending":
+        return "Clock";
+      case "rejected":
+        return "XCircle";
       default:
-        return 'AlertCircle';
+        return "AlertCircle";
     }
   };
 
   const menuItems = [
     {
-      label: 'Profile Settings',
-      icon: 'User',
-      action: () => console.log('Profile settings'),
+      label: "Profile Settings",
+      icon: "User",
+      action: () => console.log("Profile settings"),
     },
     {
-      label: 'Account Security',
-      icon: 'Shield',
-      action: () => console.log('Account security'),
+      label: "Account Security",
+      icon: "Shield",
+      action: () => console.log("Account security"),
     },
     {
-      label: 'Notifications',
-      icon: 'Bell',
-      action: () => console.log('Notifications'),
+      label: "Notifications",
+      icon: "Bell",
+      action: () => console.log("Notifications"),
     },
     {
-      label: 'Help & Support',
-      icon: 'HelpCircle',
-      action: () => console.log('Help & Support'),
-    }
+      label: "Help & Support",
+      icon: "HelpCircle",
+      action: () => console.log("Help & Support"),
+    },
   ];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event?.target?.closest('.user-profile-dropdown')) {
+      if (!event?.target?.closest(".user-profile-dropdown")) {
         setShowDropdown(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const getInitials = (name) => {
-    return name?.split(' ')?.map(word => word?.charAt(0))?.join('')?.toUpperCase()?.slice(0, 2);
+    return name
+      ?.split(" ")
+      ?.map((word) => word?.charAt(0))
+      ?.join("")
+      ?.toUpperCase()
+      ?.slice(0, 2);
   };
 
   return (
@@ -94,8 +98,8 @@ const UserProfile = () => {
       >
         <div className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-sm font-medium">
           {user?.avatar ? (
-            <img 
-              src={user?.avatar} 
+            <img
+              src={user?.avatar}
               alt={user?.name}
               className="w-8 h-8 rounded-full object-cover"
             />
@@ -104,25 +108,27 @@ const UserProfile = () => {
           )}
         </div>
         <div className="hidden sm:block text-left">
-          <div className="text-sm font-medium text-foreground">{user?.name}</div>
+          <div className="text-sm font-medium text-foreground">
+            {user?.name}
+          </div>
         </div>
-        <Icon 
-          name="ChevronDown" 
-          size={14} 
+        <Icon
+          name="ChevronDown"
+          size={14}
           className={`text-muted-foreground transition-transform duration-150 ${
-            showDropdown ? 'rotate-180' : ''
-          }`} 
+            showDropdown ? "rotate-180" : ""
+          }`}
         />
       </button>
       {showDropdown && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-lg shadow-elevation-3 z-300 animate-fade-in">
+        <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-lg shadow-elevation-3 z-[9999] animate-fade-in">
           {/* User Info Header */}
           <div className="p-4 border-b border-border">
             <div className="flex items-center space-x-3">
               <div className="flex items-center justify-center w-10 h-10 bg-primary text-primary-foreground rounded-full text-sm font-medium">
                 {user?.avatar ? (
-                  <img 
-                    src={user?.avatar} 
+                  <img
+                    src={user?.avatar}
                     alt={user?.name}
                     className="w-10 h-10 rounded-full object-cover"
                   />
@@ -139,17 +145,21 @@ const UserProfile = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* KYC Status */}
             <div className="mt-3 flex items-center justify-between">
               <span className="text-xs text-muted-foreground">KYC Status</span>
               <div className="flex items-center space-x-1">
-                <Icon 
-                  name={getKycStatusIcon(user?.kycStatus)} 
-                  size={12} 
-                  className={getKycStatusColor(user?.kycStatus)} 
+                <Icon
+                  name={getKycStatusIcon(user?.kycStatus)}
+                  size={12}
+                  className={getKycStatusColor(user?.kycStatus)}
                 />
-                <span className={`text-xs font-medium capitalize ${getKycStatusColor(user?.kycStatus)}`}>
+                <span
+                  className={`text-xs font-medium capitalize ${getKycStatusColor(
+                    user?.kycStatus
+                  )}`}
+                >
                   {user?.kycStatus}
                 </span>
               </div>
@@ -167,7 +177,11 @@ const UserProfile = () => {
                 }}
                 className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-popover-foreground hover:bg-muted rounded-lg transition-smooth duration-150"
               >
-                <Icon name={item?.icon} size={16} className="text-muted-foreground" />
+                <Icon
+                  name={item?.icon}
+                  size={16}
+                  className="text-muted-foreground"
+                />
                 <span>{item?.label}</span>
               </button>
             ))}

@@ -3,6 +3,19 @@ import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 import Select from "../../../components/ui/Select";
 
+// INR short formatter: 1CR, 25L, 7K
+const formatINRShort = (value) => {
+  const inrValue = value * 83;
+  if (inrValue >= 10000000) {
+    return `₹${(inrValue / 10000000).toFixed(2).replace(/\.00$/, "")}CR`;
+  } else if (inrValue >= 100000) {
+    return `₹${(inrValue / 100000).toFixed(2).replace(/\.00$/, "")}L`;
+  } else if (inrValue >= 1000) {
+    return `₹${(inrValue / 1000).toFixed(2).replace(/\.00$/, "")}K`;
+  }
+  return `₹${inrValue.toLocaleString("en-IN")}`;
+};
+
 const DividendTracker = ({
   dividendData,
   totalDividends,
@@ -104,7 +117,7 @@ const DividendTracker = ({
                   Total Earned
                 </div>
                 <div className="text-xl font-bold text-success">
-                  {formatCurrency(totalDividends)}
+                  {formatINRShort(totalDividends)}
                 </div>
               </div>
               <div>
@@ -112,25 +125,28 @@ const DividendTracker = ({
                   Monthly Average
                 </div>
                 <div className="text-xl font-bold text-foreground">
-                  {formatCurrency(avgMonthlyDividend)}
+                  {formatINRShort(avgMonthlyDividend)}
                 </div>
               </div>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <Select
-              options={timeOptions}
-              value={timeFilter}
-              onChange={setTimeFilter}
-              className="w-full sm:w-40"
-            />
-            <Select
-              options={statusOptions}
-              value={statusFilter}
-              onChange={setStatusFilter}
-              className="w-full sm:w-40"
-            />
+            {/* Dropdown container to prevent overflow */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Select
+                options={timeOptions}
+                value={timeFilter}
+                onChange={setTimeFilter}
+                className="w-full sm:w-40"
+              />
+              <Select
+                options={statusOptions}
+                value={statusFilter}
+                onChange={setStatusFilter}
+                className="w-full sm:w-40"
+              />
+            </div>
           </div>
         </div>
       </div>
