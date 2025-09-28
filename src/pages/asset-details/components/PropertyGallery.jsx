@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import Image from '../../../components/AppImage';
-import Icon from '../../../components/AppIcon';
+import React, { useState } from "react";
+import Image from "../../../components/AppImage";
+import Icon from "../../../components/AppIcon";
 
 const PropertyGallery = ({ images, propertyName }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -11,7 +11,9 @@ const PropertyGallery = ({ images, propertyName }) => {
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images?.length) % images?.length);
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + images?.length) % images?.length
+    );
   };
 
   const selectImage = (index) => {
@@ -27,7 +29,7 @@ const PropertyGallery = ({ images, propertyName }) => {
           alt={`${propertyName} - Image ${currentImageIndex + 1}`}
           className="w-full h-full object-cover"
         />
-        
+
         {/* Navigation Arrows */}
         {images?.length > 1 && (
           <>
@@ -69,7 +71,8 @@ const PropertyGallery = ({ images, propertyName }) => {
                 onClick={() => selectImage(index)}
                 className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-smooth duration-150 ${
                   index === currentImageIndex
-                    ? 'border-primary' :'border-border hover:border-primary/50'
+                    ? "border-primary"
+                    : "border-border hover:border-primary/50"
                 }`}
               >
                 <Image
@@ -84,14 +87,14 @@ const PropertyGallery = ({ images, propertyName }) => {
       )}
       {/* Fullscreen Modal */}
       {showFullscreen && (
-        <div className="fixed inset-0 z-500 bg-black/90 flex items-center justify-center">
+        <div className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center">
           <div className="relative max-w-7xl max-h-full p-4">
             <Image
               src={images?.[currentImageIndex]?.url}
               alt={`${propertyName} - Fullscreen`}
               className="max-w-full max-h-full object-contain"
             />
-            
+
             <button
               onClick={() => setShowFullscreen(false)}
               className="absolute top-4 right-4 w-12 h-12 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-smooth duration-150"
