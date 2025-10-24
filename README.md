@@ -4,6 +4,7 @@
 
 Just like owning shares in a company, users can own **digital tokens representing fractions of real estate assets**, with ownership cryptographically secured on a decentralized network. The platform transforms traditionally illiquid assets into **liquid, tradeable tokens** that can be transferred instantly – similar to sending money via UPI.
 
+![image alt](https://github.com/SushantAzad/FA/blob/main/collage.png?raw=true)
 ---
 
 ## 🚀 Key Features
