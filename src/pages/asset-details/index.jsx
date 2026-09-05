@@ -1,3 +1,5 @@
+import { api } from '../../lib/api';
+import { demoProperties, propertyDetails } from '../../lib/properties';
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import NavigationBar from "../../components/ui/NavigationBar";
@@ -15,67 +17,10 @@ import ComparableProperties from "./components/ComparableProperties";
 const AssetDetails = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [investmentError, setInvestmentError] = useState('');
   const [activeTab, setActiveTab] = useState("overview");
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Mock property data - in real app, this would come from API based on ID
-  const mockProperty = {
-    id: searchParams?.get("id") || "prop-1",
-    name: "Luxury Downtown Residence",
-    address: "123 Main Street",
-    city: "New York",
-    state: "NY",
-    zipCode: "10001",
-    fullAddress: "123 Main Street, New York, NY 10001",
-    neighborhood: "Financial District",
-    type: "Residential Apartment",
-    squareFootage: 2850,
-    bedrooms: 3,
-    bathrooms: 2,
-    yearBuilt: 2019,
-    tokenPrice: 100,
-    expectedReturn: 8.5,
-    dividendYield: 4.0,
-    totalValue: 2500000,
-    totalTokens: 25000,
-    availableTokens: 8750,
-    minimumInvestment: 1000,
-    coordinates: { lat: 40.7589, lng: -73.9851 },
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
-        caption: "Living Room",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop",
-        caption: "Kitchen",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop",
-        caption: "Bedroom",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?w=800&h=600&fit=crop",
-        caption: "Bathroom",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?w=800&h=600&fit=crop",
-        caption: "Building Exterior",
-      },
-    ],
-    amenities: [
-      "Concierge Service",
-      "Fitness Center",
-      "Rooftop Terrace",
-      "In-unit Laundry",
-      "Parking Garage",
-      "Pet Friendly",
-      "Doorman",
-      "Pool",
-    ],
-    description: `Experience luxury living in this stunning 3-bedroom, 2-bathroom residence located in the heart of Manhattan's Financial District. This modern apartment features floor-to-ceiling windows, premium finishes, and breathtaking city views.\n\nThe open-concept living space seamlessly blends the living, dining, and kitchen areas, creating an ideal environment for both relaxation and entertainment. The gourmet kitchen boasts high-end stainless steel appliances, quartz countertops, and custom cabinetry.\n\nBuilding amenities include 24/7 concierge service, state-of-the-art fitness center, rooftop terrace with panoramic city views, and a residents' lounge. The prime location offers easy access to world-class dining, shopping, and transportation.`,
-  };
 
   const tabs = [
     { id: "overview", label: "Overview", icon: "Home" },
@@ -86,21 +31,22 @@ const AssetDetails = () => {
   ];
 
   useEffect(() => {
-    // Simulate loading property data
-    const loadProperty = async () => {
-      setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setProperty(mockProperty);
-      setLoading(false);
-    };
-
-    loadProperty();
+    let cancelled = false;
+    const id = searchParams.get('id');
+    setLoading(true);
+    setProperty(null);
+    const demo = demoProperties.find(p => String(p.id) === id);
+    const request = demo ? Promise.resolve(demo) : api('/properties/' + encodeURIComponent(id || ''));
+    request.then(p => { if (!cancelled) setProperty(propertyDetails(p)); })
+      .catch(() => { if (!cancelled) setProperty(null); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [searchParams]);
 
   const handleInvestment = (investmentData) => {
     console.log("Investment data:", investmentData);
     // In real app, this would process the investment
-    navigate("/transaction-history");
+    setInvestmentError("Payment processing is not configured. No investment or charge was made.");
   };
 
   const handleBackToAssets = () => {
@@ -149,6 +95,8 @@ const AssetDetails = () => {
     <div className="min-h-screen bg-background">
       <NavigationBar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20">
+        {investmentError && <p role="alert" className="mb-4 text-error">{investmentError}</p>}
+        <p className="mb-4 text-sm text-muted-foreground">Prototype: financial projections, documents and nearby amenities are sample data, not verified property information.</p>
         {/* Breadcrumb */}
         <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
           <button
@@ -179,11 +127,11 @@ const AssetDetails = () => {
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center space-x-1 px-2 py-1 bg-success/10 text-success rounded-full">
                     <Icon name="Shield" size={12} />
-                    <span className="text-xs font-medium">Verified</span>
+                    <span className="text-xs font-medium">{property.status}</span>
                   </div>
                   <div className="flex items-center space-x-1 px-2 py-1 bg-primary/10 text-primary rounded-full">
                     <Icon name="Zap" size={12} />
-                    <span className="text-xs font-medium">Trending</span>
+                    <span className="text-xs font-medium">Prototype</span>
                   </div>
                 </div>
               </div>

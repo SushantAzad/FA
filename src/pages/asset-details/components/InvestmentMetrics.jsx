@@ -31,7 +31,7 @@ const InvestmentMetrics = ({ property }) => {
     {
       icon: "IndianRupee",
       label: "Token Price (INR)",
-      value: `₹${property?.tokenPrice?.toLocaleString("en-IN", {
+      value: `₹${(property?.tokenPrice * 83).toLocaleString("en-IN", {
         maximumFractionDigits: 0,
       })}`,
       change: "+2.4%",
@@ -47,7 +47,7 @@ const InvestmentMetrics = ({ property }) => {
     {
       icon: "Percent",
       label: "Dividend Yield",
-      value: `${property?.dividendYield}%`,
+      value: property?.dividendYield == null ? 'Not provided' : `${property.dividendYield}%`,
       change: "Quarterly",
       neutral: true,
     },

@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { api } from '../../lib/api';
+import { demoProperties } from '../../lib/properties';
+import React, { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet";
 import NavigationBar from "../../components/ui/NavigationBar";
 import FilterToolbar from "./components/FilterToolbar";
@@ -10,7 +12,7 @@ const AssetBrowser = () => {
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [isMapView, setIsMapView] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [showQuickInvestModal, setShowQuickInvestModal] = useState(false);
@@ -19,191 +21,27 @@ const AssetBrowser = () => {
   const [totalResults, setTotalResults] = useState(0);
 
   // Mock properties data
-  const mockProperties = [
-    {
-      id: 1,
-      title: "Luxury Downtown Apartment Complex",
-      location: "Manhattan, New York, NY",
-      type: "Residential",
-      image:
-        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&h=300&fit=crop",
-      tokenPrice: 1000,
-      expectedReturn: 8.5,
-      minInvestment: 1000,
-      riskLevel: "Medium",
-      status: "Available",
-      fundedPercentage: 65,
-      raisedAmount: 1300000,
-      targetAmount: 2000000,
-      investors: 234,
-      timeLeft: "45 days",
-      totalTokens: 2000,
-      isFavorited: false,
-    },
-    {
-      id: 2,
-      title: "Modern Office Building",
-      location: "Downtown Los Angeles, CA",
-      type: "Commercial",
-      image:
-        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop",
-      tokenPrice: 2500,
-      expectedReturn: 12.3,
-      minInvestment: 2500,
-      riskLevel: "High",
-      status: "Limited",
-      fundedPercentage: 89,
-      raisedAmount: 4450000,
-      targetAmount: 5000000,
-      investors: 156,
-      timeLeft: "12 days",
-      totalTokens: 2000,
-      isFavorited: true,
-    },
-    {
-      id: 3,
-      title: "Suburban Shopping Center",
-      location: "Austin, Texas, TX",
-      type: "Retail",
-      image:
-        "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop",
-      tokenPrice: 500,
-      expectedReturn: 6.8,
-      minInvestment: 500,
-      riskLevel: "Low",
-      status: "Available",
-      fundedPercentage: 42,
-      raisedAmount: 630000,
-      targetAmount: 1500000,
-      investors: 89,
-      timeLeft: "67 days",
-      totalTokens: 3000,
-      isFavorited: false,
-    },
-    {
-      id: 4,
-      title: "Industrial Warehouse Complex",
-      location: "Chicago, Illinois, IL",
-      type: "Industrial",
-      image:
-        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
-      tokenPrice: 1500,
-      expectedReturn: 9.2,
-      minInvestment: 1500,
-      riskLevel: "Medium",
-      status: "Available",
-      fundedPercentage: 73,
-      raisedAmount: 2190000,
-      targetAmount: 3000000,
-      investors: 167,
-      timeLeft: "28 days",
-      totalTokens: 2000,
-      isFavorited: false,
-    },
-    {
-      id: 5,
-      title: "Beachfront Resort Property",
-      location: "Miami Beach, Florida, FL",
-      type: "Mixed Use",
-      image:
-        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop",
-      tokenPrice: 5000,
-      expectedReturn: 15.7,
-      minInvestment: 5000,
-      riskLevel: "High",
-      status: "Available",
-      fundedPercentage: 34,
-      raisedAmount: 1700000,
-      targetAmount: 5000000,
-      investors: 78,
-      timeLeft: "89 days",
-      totalTokens: 1000,
-      isFavorited: true,
-    },
-    {
-      id: 6,
-      title: "Tech Campus Office Park",
-      location: "Seattle, Washington, WA",
-      type: "Office",
-      image:
-        "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop",
-      tokenPrice: 3000,
-      expectedReturn: 11.4,
-      minInvestment: 3000,
-      riskLevel: "Medium",
-      status: "Available",
-      fundedPercentage: 56,
-      raisedAmount: 2240000,
-      targetAmount: 4000000,
-      investors: 134,
-      timeLeft: "52 days",
-      totalTokens: 1333,
-      isFavorited: false,
-    },
-    {
-      id: 7,
-      title: "Historic Renovation Project",
-      location: "Denver, Colorado, CO",
-      type: "Mixed Use",
-      image:
-        "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&h=300&fit=crop",
-      tokenPrice: 750,
-      expectedReturn: 7.9,
-      minInvestment: 750,
-      riskLevel: "Medium",
-      status: "Sold Out",
-      fundedPercentage: 100,
-      raisedAmount: 1500000,
-      targetAmount: 1500000,
-      investors: 298,
-      timeLeft: "Completed",
-      totalTokens: 2000,
-      isFavorited: false,
-    },
-    {
-      id: 8,
-      title: "Student Housing Complex",
-      location: "Atlanta, Georgia, GA",
-      type: "Residential",
-      image:
-        "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=400&h=300&fit=crop",
-      tokenPrice: 800,
-      expectedReturn: 8.8,
-      minInvestment: 800,
-      riskLevel: "Low",
-      status: "Available",
-      fundedPercentage: 78,
-      raisedAmount: 1560000,
-      targetAmount: 2000000,
-      investors: 203,
-      timeLeft: "33 days",
-      totalTokens: 2500,
-      isFavorited: false,
-    },
-  ];
+
+  const [loadError, setLoadError] = useState('');
+  const [activeFilters, setActiveFilters] = useState({});
 
   // Initialize data
   useEffect(() => {
-    const loadInitialData = async () => {
-      setLoading(true);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setProperties(mockProperties);
-      setFilteredProperties(mockProperties);
-      setTotalResults(mockProperties?.length);
-      setLoading(false);
-    };
-
-    loadInitialData();
+    let cancelled = false;
+    api('/properties').then(data => {
+      if (!cancelled) setProperties([...data, ...demoProperties]);
+    }).catch(error => {
+      if (!cancelled) { setLoadError(error.message); setProperties(demoProperties); }
+    }).finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, []);
 
-  const handleFiltersChange = (filters) => {
-    setLoading(true);
+  useEffect(() => { applyFilters(activeFilters); }, [properties, activeFilters]);
 
-    // Simulate filtering delay
-    setTimeout(() => {
-      let filtered = [...mockProperties];
+  const handleFiltersChange = useCallback((filters) => setActiveFilters(filters), []);
+
+  const applyFilters = (filters) => {
+      let filtered = [...properties];
 
       // Apply search filter
       if (filters?.searchQuery) {
@@ -221,7 +59,7 @@ const AssetBrowser = () => {
         filtered = filtered?.filter((property) =>
           property?.location
             ?.toLowerCase()
-            ?.includes(filters?.location?.toLowerCase())
+            ?.includes(filters?.location?.toLowerCase().replaceAll('-', ' '))
         );
       }
 
@@ -230,7 +68,7 @@ const AssetBrowser = () => {
         filtered = filtered?.filter(
           (property) =>
             property?.type?.toLowerCase() ===
-            filters?.propertyType?.toLowerCase()
+            filters?.propertyType?.toLowerCase().replaceAll('-', ' ')
         );
       }
 
@@ -295,7 +133,7 @@ const AssetBrowser = () => {
           });
           break;
         case "newest":
-          filtered?.sort((a, b) => b?.id - a?.id);
+          filtered?.sort((a, b) => (Date.parse(b.createdAt) || Number(b.id) || 0) - (Date.parse(a.createdAt) || Number(a.id) || 0));
           break;
         default: // popularity
           filtered?.sort((a, b) => b?.investors - a?.investors);
@@ -303,8 +141,6 @@ const AssetBrowser = () => {
 
       setFilteredProperties(filtered);
       setTotalResults(filtered?.length);
-      setLoading(false);
-    }, 500);
   };
 
   const handleLoadMore = async () => {
@@ -336,7 +172,7 @@ const AssetBrowser = () => {
   };
 
   const handleInvestmentConfirm = (investmentData) => {
-    console.log("Investment confirmed:", investmentData);
+    setLoadError("Payment processing is not configured. No investment or charge was made.");
     setShowQuickInvestModal(false);
     setQuickInvestProperty(null);
     // In real implementation, this would process the investment
@@ -364,6 +200,8 @@ const AssetBrowser = () => {
         <NavigationBar />
 
         <main className="container mx-auto px-4 py-8">
+          {loadError && <p role="alert" className="mb-4 text-error">{loadError} Showing demonstration listings only.</p>}
+          <p className="mb-4 text-sm text-muted-foreground">Prototype: sample listings and investment screens are demonstrations. New listings await review.</p>
           {/* Page Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">

@@ -13,6 +13,9 @@ export default defineConfig({
   },
   plugins: [tsconfigPaths(), react(), tagger()],
   server: {
+    watch: { ignored: ['**/blockchain/data/**', '**/blockchain/artifacts/**'] },
+    fs: { deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', '**/blockchain/data/**', '**/server/data/**'] },
+    proxy: { '/api': 'http://127.0.0.1:4029' },
     port: "4028",
     host: "0.0.0.0",
     strictPort: true,

@@ -1,159 +1,83 @@
-# 🏡 Fractional Asset
+# FractionalAsset — blockchain prototype
 
-**Fractional Asset** is a revolutionary web application that democratizes real estate investment in India by enabling fractional ownership of properties through **asset tokenization technology**. Inspired by **NPCI's asset tokenization initiatives**, this platform allows users to buy as little as **1% of a property**, making premium real estate accessible to everyone.
+FractionalAsset runs a local Ethereum-compatible blockchain with an ERC-1155 smart contract for fractional property shares. The active app reads listings, holdings and activity from that contract. Wallets sign transactions; the API does not maintain ownership records in JSON.
 
-Just like owning shares in a company, users can own **digital tokens representing fractions of real estate assets**, with ownership cryptographically secured on a decentralized network. The platform transforms traditionally illiquid assets into **liquid, tradeable tokens** that can be transferred instantly – similar to sending money via UPI.
+## Run
 
-![image alt](https://github.com/SushantAzad/FA/blob/main/collage.png?raw=true)
----
+Use Node.js 20 or newer. From this project folder:
 
-## 🚀 Key Features
+```powershell
+npm ci --legacy-peer-deps
+npm run dev:blockchain
+```
 
-### Fractional Ownership Made Simple
+Open http://127.0.0.1:4030. This single command compiles Solidity, starts a persistent local chain, deploys the contract on first run, starts the API, and starts Vite. Keep the terminal open. Stop with Ctrl+C. On subsequent starts the same chain and deployment are reused.
 
-- **Micro-investments**: Start investing with as little as 1% of a property's value
-- **Instant Ownership Verification**: Cryptographically secured digital tokens prove ownership instantly
-- **Seamless Asset Transfer**: Move assets within seconds, just like UPI payments
-- **Unified Asset Wallet**: Manage all tokenized assets from a single dashboard
+- Frontend: http://127.0.0.1:4030
+- API: http://127.0.0.1:4029/api/health
+- Local Ethereum RPC: http://127.0.0.1:8545
+- Chain ID: `31337`
+- Currency: valueless local test ETH
 
-### Investment Platform
+Ports 4030, 4029 and 8545 must be available. Do not run the old frontend/API terminals at the same time. `npm run server` runs just the chain and API; if using separate terminals, start the frontend with `npm start -- --host 127.0.0.1 --port 4030`.
 
-- **Property Browser**: Explore available properties with advanced filtering and map view
-- **Real-time Investment**: Quick investment modal for immediate participation
-- **Portfolio Management**: Track performance, dividends, and rebalancing opportunities
-- **Transaction History**: Complete audit trail of all investments and transfers
+Ganache can print a native µWS compatibility warning on newer Node versions. It falls back to its JavaScript implementation; this does not prevent the chain from running.
 
-### Enhanced Liquidity & Accessibility
+## Try the complete flow
 
-- **24/7 Trading**: Buy and sell fractional ownership anytime
-- **Lower Entry Barriers**: Access premium properties previously reserved for high-net-worth individuals
-- **Geographic Independence**: Invest in properties across India from anywhere
-- **Professional Management**: Properties managed by certified professionals
+1. Choose **Account 2** under Local test account and click **Use test account**. These public development accounts start with test ETH and require no wallet extension.
+2. Use **List Property**. Enter title, location, total shares and a price per share in test ETH. Metadata URI is optional. Submit and wait for the transaction confirmation.
+3. Switch to **Account 1 (administrator)**, open **Dashboard**, and approve the new property.
+4. Switch to **Account 3**, open **Investments**, select the property, and buy shares. A confirmation shows the transaction hash and block number.
+5. Open **Portfolio** to see the contract balance and transfer shares to another test account address.
+6. Switch back to the seller, open **Dashboard**, and withdraw the accumulated sale proceeds.
+7. **History** displays confirmed contract events. Refresh reads the latest chain state; data also refreshes after each transaction and account change.
 
-### 🆕 List Property (New Feature)
+A sample property is created and approved on the first run. It is explicitly labeled as a demo and is an actual on-chain listing. No investor holdings or purchases are fabricated.
 
-Empowering property owners to tokenize and share their assets with investors.
+## Browser wallets
 
-- **Property Listing Portal**: Upload property details, documents, and images
-- **Fractional Token Creation**: Define how much of the property to tokenize (e.g., 10%, 25%, or more)
-- **Customizable Offers**: Decide minimum investment share (e.g., 1%)
-- **Seamless Token Distribution**: Automatically generate and allocate tokens to buyers
-- **Owner Dashboard**: Track shared ownership, transactions, and earnings
+Use **Connect browser wallet** in a browser with an EIP-1193 extension such as MetaMask. Add a local network with RPC `http://127.0.0.1:8545`, chain ID `31337`, and currency symbol `ETH`. The wallet must use this exact deployment. The Codex in-app browser may not have a wallet extension; use local test accounts there.
 
----
+A new browser-wallet address needs local test ETH before sending transactions. It can be funded from a development account using the local RPC or a wallet connected to this local chain. Never send real ETH to these development accounts. The application never requests or stores seed phrases/private keys. Its local-account mode deliberately uses unlocked development accounts and must remain loopback-only.
 
-## 🎯 Problem Statement
+## Contract behavior
 
-Traditional real estate investment in India faces several challenges:
+`contracts/FractionalProperty.sol` uses OpenZeppelin ERC1155Supply, Ownable, and ReentrancyGuard.
 
-- **High Capital Requirements**: Premium properties require substantial upfront investment
-- **Poor Liquidity**: Properties can take months to sell
-- **Complex Verification**: Loan processes against assets involve countless letters and verifications
-- **Limited Access**: Geographic and financial barriers restrict investment opportunities
+- `listProperty`: records the seller, title, location, metadata URI, maximum share supply and immutable price in wei. New listings are unapproved.
+- `setApproved`: administrator-only approval or revocation of primary sales.
+- `setSaleActive`: seller or administrator can pause/resume a primary sale.
+- `buyShares`: requires approval, an active sale, positive shares within remaining supply, and exact ETH payment. Mints shares to the buyer and credits seller proceeds.
+- `safeTransferFrom` / standard ERC-1155 transfers: move owned shares with normal holder/operator authorization. Approval revocation pauses new purchases, not existing-holder transfers.
+- `withdrawProceeds`: pays the caller's proceeds using checks-effects-interactions and a reentrancy guard.
 
----
+A property's cap describes its maximum token supply. Unpurchased shares are not minted. Portfolio percentages use the cap, not just currently minted supply. Token ownership does not confer legal title to a building.
 
-## 💡 Our Solution
+Title/location/URI are public on-chain data. Large files remain off-chain, referenced by an optional `ipfs://` or `https://` URI. This implementation does not upload to IPFS, verify documents, or automatically fetch metadata. Do not put private information into immutable metadata or transaction input.
 
-Following NPCI's asset tokenization framework, our platform addresses these challenges by:
+The API publishes `/api/chain`, checks `/api/health`, and provides a restricted `/api/rpc` proxy. Local test transactions are restricted to configured test senders and the deployed contract. Chain-management RPC calls and cross-origin browser requests are rejected by that proxy. Ganache itself is bound to loopback and remains a development-only node.
 
-- **Instant Ownership Proof**: Tokenized assets can be instantly verified and shared, like sending a QR code over WhatsApp
-- **Enhanced Asset Liquidity**: Assets that traditionally take months to sell can be moved within seconds
-- **Unified Asset Management**: Single wallet to manage and transact on all tokenized assets
-- **Financial Inclusion**: More Indians get access to wealth-building opportunities than ever before
-- **Owner Monetization (New)**: Property owners can unlock liquidity by selling fractional tokens without losing complete ownership
+## Persistence and validation
 
----
+- Chain state: `blockchain/data/chain/`
+- Deployment address, first block and compiled-bytecode fingerprint: `blockchain/data/deployment.json`
+- Generated ABI/bytecode: `blockchain/artifacts/FractionalProperty.json`
 
-## 🛠️ Technology Stack
+Runtime files are gitignored and excluded from Vite serving/watchers. Back up the entire `blockchain/data` directory while the app is stopped to preserve accounts, balances and deployment together. Contract source changes cause a clear mismatch error instead of silently reusing an incompatible deployment. To start a fresh local chain, stop the app and move the existing `blockchain/data` directory to a backup location before restarting.
 
-- **Frontend**: React 18+ with Vite
-- **Styling**: Tailwind CSS with PostCSS
-- **Language**: JavaScript (JSX)
-- **Routing**: React Router (client-side routing)
-- **UI Components**: Custom component library with reusable elements
-- **Development**: Modern ES6+ with hot module replacement
+```powershell
+npm run contracts:compile
+npm test
+npm run build
+```
 
----
+Tests cover validation, administrator/seller authorization, exact payments, supply limits, ERC-1155 transfers, withdrawals, reentrancy, and the local RPC proxy. Contract tests use an isolated ephemeral chain and do not alter the running app's chain.
 
-## 🏗️ Core Pages & Features
+## Scope
 
-### Authentication System
+This is a working local blockchain prototype, not a public-network deployment or audited financial product. The active routes now use on-chain data; old prototype components and the legacy JSON API implementation remain in source for reference but are not the active application. Old JSON listings are not automatically migrated.
 
-- Wallet-based authentication with trust signals
-- Secure registration and login processes
-- Integration with popular crypto wallets
+Not implemented: legal ownership registration, KYC, compliance checks, rental dividends, fiat/stablecoin payments, resale orders, public-testnet deployment, production custody, or a production indexer. The activity reader shows the latest 100 matching events in a 10,000-block window and supports up to 500 listings. Expand indexing and pagination before scaling. Public deployment requires a separate deployment/configuration path without unlocked accounts, a contract/security review, and an appropriate legal/compliance design.
 
-### Asset Browser
-
-- Property discovery with advanced filters
-- Interactive map view for location-based browsing
-- Property cards with key investment metrics
-- Quick investment modal for immediate purchases
-
-### Asset Details
-
-- Comprehensive property information and specifications
-- Financial metrics and investment analysis
-- Legal document access and verification
-- Comparable properties for market analysis
-- Property gallery and location details
-
-### Portfolio Management
-
-- Real-time portfolio overview and performance tracking
-- Holdings table with detailed asset breakdown
-- Dividend tracking and payment history
-- Portfolio rebalancing tools
-- Token selling capabilities
-
-### Dashboard
-
-- Portfolio summary with key metrics
-- Asset allocation visualization
-- Performance charts and analytics
-- Quick action panel for common tasks
-- Recent transactions overview
-
-### Transaction History
-
-- Complete transaction audit trail
-- Advanced filtering and search capabilities
-- Transaction details and status tracking
-- Export functionality for record keeping
-
-### 🆕 List Property
-
-- Property owners can upload and tokenize their assets
-- Define fractional ownership and distribute tokens
-- Owner dashboard for tracking revenue and co-ownership
-- Built-in compliance checks and document verification
-
----
-
-## 🔒 Security & Trust
-
-- **Cryptographic Security**: All tokens are cryptographically secured on a decentralized network
-- **Immutable Records**: No single entity can alter, forge, or lose ownership records
-- **Transparent Operations**: Public blockchain ensures complete transparency
-- **Professional Management**: Properties managed by certified professionals and legal compliance
-
----
-
-## 🌟 Benefits for Investors & Owners
-
-### For Investors
-
-- Lower Investment Threshold: Start with minimal capital
-- Geographic Freedom: Invest in premium properties across India
-- 24/7 Availability: Trade and manage assets anytime
-- Instant Transfers: Buy/sell fractional tokens seamlessly
-
-### For Property Owners (New)
-
-- Unlock Liquidity: Monetize property without full sale
-- Flexible Control: Choose how much of your property to fractionalize
-- Wider Reach: Access a pool of small and large investors
-- Transparent Management: Track investors, ownership, and revenue in real time
-
----
+References: [OpenZeppelin ERC-1155 documentation](https://docs.openzeppelin.com/contracts/5.x/erc1155), [ethers provider documentation](https://docs.ethers.org/v6/api/providers/).

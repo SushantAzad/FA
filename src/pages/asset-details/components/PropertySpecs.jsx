@@ -11,7 +11,7 @@ const PropertySpecs = ({ property }) => {
     {
       icon: 'Ruler',
       label: 'Square Footage',
-      value: `${property?.squareFootage?.toLocaleString()} sq ft`
+      value: property?.squareFootage ? `${property.squareFootage.toLocaleString()} sq ft` : 'Not provided'
     },
     {
       icon: 'Bed',
@@ -46,7 +46,7 @@ const PropertySpecs = ({ property }) => {
             </div>
             <div>
               <div className="text-sm text-muted-foreground">{spec?.label}</div>
-              <div className="text-sm font-medium text-foreground">{spec?.value}</div>
+              <div className="text-sm font-medium text-foreground">{spec?.value ?? 'Not provided'}</div>
             </div>
           </div>
         ))}

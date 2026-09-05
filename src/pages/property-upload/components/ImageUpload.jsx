@@ -1,34 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../../../components/ui/Button";
 
 const ImageUpload = ({ onImagesSelected }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
 
+  const [error, setError] = useState('');
+  useEffect(() => () => previewUrls.forEach(url => URL.revokeObjectURL(url)), [previewUrls]);
+
+  const updateFiles = (files) => {
+    setSelectedFiles(files);
+    setPreviewUrls(files.map(file => URL.createObjectURL(file)));
+    onImagesSelected?.(files);
+  };
+
   const handleFileSelect = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedFiles((prev) => [...prev, ...files]);
-
-    // Create preview URLs for the selected images
-    const newPreviewUrls = files.map((file) => URL.createObjectURL(file));
-    setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
-
-    if (onImagesSelected) {
-      onImagesSelected(files);
+    const files = [...selectedFiles, ...Array.from(e.target.files || [])];
+    e.target.value = '';
+    if (files.length > 6 || files.some(f => !['image/png', 'image/jpeg', 'image/webp'].includes(f.type)) || files.reduce((sum,f) => sum+f.size,0) > 5 * 1024 * 1024) {
+      setError('Choose up to 6 PNG, JPEG or WebP images totaling at most 5 MB.');
+      return;
     }
+    setError('');
+    updateFiles(files);
   };
 
-  const removeImage = (index) => {
-    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
-    setPreviewUrls((prev) => {
-      // Revoke the URL to prevent memory leaks
-      URL.revokeObjectURL(prev[index]);
-      return prev.filter((_, i) => i !== index);
-    });
-  };
+  const removeImage = index => updateFiles(selectedFiles.filter((_,i) => i !== index));
 
   return (
     <div className="space-y-4">
+      {error && <p role="alert" className="text-error">{error}</p>}
       <div className="flex items-center justify-center w-full">
         <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50">
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -52,14 +53,14 @@ const ImageUpload = ({ onImagesSelected }) => {
               drop
             </p>
             <p className="text-xs text-gray-500">
-              PNG, JPG, JPEG (MAX. 800x400px)
+              Up to 6 PNG, JPEG or WebP images (5 MB total)
             </p>
           </div>
           <input
             type="file"
             className="hidden"
             multiple
-            accept="image/*"
+            accept="image/png,image/jpeg,image/webp"
             onChange={handleFileSelect}
           />
         </label>

@@ -14,7 +14,7 @@ const InvestmentPanel = ({ property, onInvest }) => {
     setInvestmentAmount(amount);
 
     if (amount && !isNaN(amount)) {
-      const tokens = Math.floor(parseFloat(amount) / property?.tokenPrice);
+      const tokens = Math.floor(parseFloat(amount) / (property?.tokenPrice * 83));
       setTokenQuantity(tokens);
     } else {
       setTokenQuantity(0);
@@ -26,7 +26,7 @@ const InvestmentPanel = ({ property, onInvest }) => {
     setTokenQuantity(tokens);
 
     if (tokens && !isNaN(tokens)) {
-      const amount = parseFloat(tokens) * property?.tokenPrice;
+      const amount = parseFloat(tokens) * property?.tokenPrice * 83;
       setInvestmentAmount(amount?.toString());
     } else {
       setInvestmentAmount("");
@@ -34,7 +34,7 @@ const InvestmentPanel = ({ property, onInvest }) => {
   };
 
   const handleInvest = () => {
-    if (tokenQuantity > 0 && tokenQuantity <= property?.availableTokens) {
+    if (Number.isSafeInteger(Number(tokenQuantity)) && tokenQuantity > 0 && tokenQuantity <= property?.availableTokens && ['Available', 'Limited'].includes(property.status)) {
       setShowConfirmation(true);
     }
   };
@@ -174,7 +174,7 @@ const InvestmentPanel = ({ property, onInvest }) => {
             iconPosition="left"
             onClick={handleInvest}
             disabled={
-              tokenQuantity === 0 || tokenQuantity > property?.availableTokens
+                !Number.isSafeInteger(Number(tokenQuantity)) || tokenQuantity <= 0 || tokenQuantity > property?.availableTokens || !['Available', 'Limited'].includes(property.status)
             }
           >
             Invest Now

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
@@ -12,20 +12,18 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
   const [tokenQuantity, setTokenQuantity] = useState(1);
   const [isCalculating, setIsCalculating] = useState(false);
 
+  useEffect(() => {
+    const tokens = Math.max(1, Math.ceil((property?.minInvestment || 0) / (property?.tokenPrice || 1)));
+    setTokenQuantity(tokens);
+    setInvestmentAmount(tokens * (property?.tokenPrice || 0) * 83);
+  }, [property, isOpen]);
+
   if (!isOpen || !property) return null;
 
   const handleAmountChange = (value) => {
     const amount = parseInt(value) || 0;
     setInvestmentAmount(amount);
-    setIsCalculating(true);
-
-    // Simulate calculation delay
-    setTimeout(() => {
-      // Convert token price to INR for calculation
-      const tokens = Math.floor(amount / (property?.tokenPrice * 83));
-      setTokenQuantity(tokens);
-      setIsCalculating(false);
-    }, 300);
+    setTokenQuantity(Math.max(0, Math.floor(amount / (property?.tokenPrice * 83))));
   };
 
   const handleTokenChange = (value) => {
@@ -37,7 +35,7 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
   const handleConfirm = () => {
     onConfirm?.({
       propertyId: property?.id,
-      amount: investmentAmount,
+      amount: tokenQuantity * property.tokenPrice * 83,
       tokens: tokenQuantity,
       property,
     });
@@ -237,7 +235,7 @@ const QuickInvestModal = ({ property, isOpen, onClose, onConfirm }) => {
               variant="default"
               className="flex-1"
               onClick={handleConfirm}
-              disabled={investmentAmount < property?.minInvestment}
+              disabled={!Number.isSafeInteger(tokenQuantity) || tokenQuantity < 1 || tokenQuantity * property.tokenPrice < property.minInvestment || tokenQuantity > (property.availableTokens ?? Math.floor(property.totalTokens * (1 - property.fundedPercentage / 100))) || !['Available', 'Limited'].includes(property.status)}
               iconName="CreditCard"
               iconPosition="left"
             >

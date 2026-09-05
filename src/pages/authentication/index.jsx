@@ -25,7 +25,9 @@ const Authentication = () => {
     // Check if user is already authenticated
     const savedAuth = localStorage.getItem('fractionalAssetAuth');
     if (savedAuth) {
-      const authData = JSON.parse(savedAuth);
+      let authData;
+      try { authData = JSON.parse(savedAuth); }
+      catch { localStorage.removeItem('fractionalAssetAuth'); return; }
       if (authData?.walletAddress || authData?.email) {
         navigate('/dashboard');
       }

@@ -6,11 +6,11 @@ const PropertyFinancials = ({ property }) => {
 
   const financialData = {
     overview: {
-      totalValue: 2500000,
-      tokenPrice: 100,
-      totalTokens: 25000,
-      availableTokens: 8750,
-      minimumInvestment: 1000,
+      totalValue: property.totalValue,
+      tokenPrice: property.tokenPrice,
+      totalTokens: property.totalTokens,
+      availableTokens: property.availableTokens,
+      minimumInvestment: property.minimumInvestment,
       managementFee: 1.5,
       performanceFee: 20,
     },

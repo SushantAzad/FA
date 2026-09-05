@@ -23,7 +23,7 @@ const PropertyCard = ({ property, onFavorite, onQuickInvest }) => {
   };
 
   const handleCardClick = () => {
-    navigate("/asset-details", { state: { propertyId: property?.id } });
+    navigate(`/asset-details?id=${encodeURIComponent(property.id)}`);
   };
 
   const getStatusColor = (status) => {
@@ -187,7 +187,7 @@ const PropertyCard = ({ property, onFavorite, onQuickInvest }) => {
             iconName="Plus"
             iconPosition="left"
             onClick={handleQuickInvest}
-            disabled={property?.status?.toLowerCase() === "sold out"}
+            disabled={!['Available', 'Limited'].includes(property?.status)}
           >
             Invest
           </Button>

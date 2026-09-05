@@ -1,6 +1,6 @@
+import { api, readImage } from '../../lib/api';
 import React, { useState } from "react";
 import NavigationBar from "../../components/ui/NavigationBar";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Select from "../../components/ui/Select";
@@ -22,6 +22,8 @@ const PropertyUpload = () => {
     lat: null,
     lng: null,
   });
+  const [accessToken, setAccessToken] = useState('');
+  const [uploadKey, setUploadKey] = useState(0);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -32,12 +34,6 @@ const PropertyUpload = () => {
     { value: "industrial", label: "Industrial" },
     { value: "land", label: "Land" },
   ];
-
-  // Google Maps
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyDeT2dEtaTZq_AKVn1tpJfdIkkcui9Aouo", // Replace with your API key
-  });
-  const [mapCenter, setMapCenter] = useState({ lat: 28.6139, lng: 77.209 }); // Default: New Delhi
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -50,16 +46,6 @@ const PropertyUpload = () => {
   // For Select component (propertyType)
   const handlePropertyTypeChange = (value) => {
     setFormData((prev) => ({ ...prev, propertyType: value }));
-  };
-
-  // Map click handler
-  const handleMapClick = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      lat: e.latLng.lat(),
-      lng: e.latLng.lng(),
-    }));
-    setMapCenter({ lat: e.latLng.lat(), lng: e.latLng.lng() });
   };
 
   const validateForm = () => {
@@ -87,24 +73,14 @@ const PropertyUpload = () => {
     if (!validateForm()) return;
     setLoading(true);
     setSuccess(false);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const images = await Promise.all(formData.images.map(readImage));
+      await api('/properties', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + accessToken }, body: JSON.stringify({ ...formData, images }) });
       setSuccess(true);
-      setFormData({
-        title: "",
-        description: "",
-        location: "",
-        price: "",
-        totalTokens: "",
-        propertyType: "",
-        bedrooms: "",
-        bathrooms: "",
-        squareFootage: "",
-        yearBuilt: "",
-        images: [],
-      });
-    }, 1500);
+      setFormData({ title: '', description: '', location: '', price: '', totalTokens: '', propertyType: '', bedrooms: '', bathrooms: '', squareFootage: '', yearBuilt: '', images: [], lat: null, lng: null });
+      setUploadKey(k => k + 1);
+    } catch (error) { setError(error.message); }
+    finally { setLoading(false); }
   };
 
   return (
@@ -141,7 +117,7 @@ const PropertyUpload = () => {
         <div className="w-full max-w-7xl mx-auto px-8 bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
           {success && (
             <div className="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800 text-center font-semibold">
-              Property listed successfully!
+              Property saved successfully and awaiting review. It is now visible in the asset browser.
             </div>
           )}
           {error && (
@@ -150,6 +126,7 @@ const PropertyUpload = () => {
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-5">
+            <Input label="Listing access token" type="password" value={accessToken} onChange={e => setAccessToken(e.target.value)} required description="Use the access token configured by the local server administrator." />
             <div>
               <label className="block text-sm font-medium mb-2">
                 Property Title
@@ -200,6 +177,7 @@ const PropertyUpload = () => {
                 <Input
                   type="number"
                   name="price"
+                  min="0.01" step="0.01"
                   value={formData.price}
                   onChange={handleInputChange}
                   placeholder="Enter price in INR"
@@ -213,6 +191,7 @@ const PropertyUpload = () => {
                 <Input
                   type="number"
                   name="totalTokens"
+                  min="1" step="1"
                   value={formData.totalTokens}
                   onChange={handleInputChange}
                   placeholder="Number of tokens"
@@ -231,41 +210,6 @@ const PropertyUpload = () => {
                 placeholder="Property location (address or area)"
                 required
               />
-              <div className="mt-2">
-                <label className="block text-xs font-medium mb-2 text-gray-500">
-                  Mark on Map
-                </label>
-                <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-                  {isLoaded ? (
-                    <GoogleMap
-                      mapContainerStyle={{ width: "100%", height: "180px" }}
-                      center={
-                        formData.lat && formData.lng
-                          ? { lat: formData.lat, lng: formData.lng }
-                          : mapCenter
-                      }
-                      zoom={formData.lat && formData.lng ? 16 : 5}
-                      onClick={handleMapClick}
-                    >
-                      {formData.lat && formData.lng && (
-                        <Marker
-                          position={{ lat: formData.lat, lng: formData.lng }}
-                        />
-                      )}
-                    </GoogleMap>
-                  ) : (
-                    <div className="flex items-center justify-center h-28 text-gray-400">
-                      Loading map...
-                    </div>
-                  )}
-                </div>
-                {formData.lat && formData.lng && (
-                  <div className="mt-1 text-xs text-gray-600">
-                    Selected: {formData.lat.toFixed(5)},{" "}
-                    {formData.lng.toFixed(5)}
-                  </div>
-                )}
-              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -327,6 +271,7 @@ const PropertyUpload = () => {
                 Property Images <span className="text-red-500">*</span>
               </label>
               <ImageUpload
+                key={uploadKey}
                 onImagesSelected={(files) =>
                   setFormData((prev) => ({ ...prev, images: files }))
                 }
